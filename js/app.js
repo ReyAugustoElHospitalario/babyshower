@@ -101,12 +101,6 @@
   // ---------- Enlaces ----------
   $$('[data-enlace]').forEach(a => { a.href = get(a.dataset.enlace); });
 
-  $$('[data-whatsapp]').forEach(a => {
-    const datos = C.confirmacion[a.dataset.whatsapp];
-    const mensaje = C.confirmacion.mensaje.replace('{nombre}', C.bebe.nombre);
-    a.href = `https://wa.me/${datos.whatsapp}?text=${encodeURIComponent(mensaje)}`;
-  });
-
   $$('iframe[data-mapa]').forEach(f => {
     f.src = `https://maps.google.com/maps?q=${encodeURIComponent(C.lugar.mapaBusqueda)}&z=16&output=embed`;
   });
@@ -121,6 +115,170 @@
   const reproducir = () => audio.play().catch(() => {});
   const alternarMusica = () => (audio.paused ? reproducir() : audio.pause());
   $$('.boton-musica, .musica-flotante').forEach(b => b.addEventListener('click', alternarMusica));
+
+  // ---------- Lista de regalos (Google Sheets vía Apps Script) ----------
+  const R = C.regalos;
+  const modal = document.querySelector('.modal-regalos');
+  const pasos = {
+    nombre: modal.querySelector('.paso-nombre'),
+    lista: modal.querySelector('.paso-lista'),
+    gracias: modal.querySelector('.paso-gracias'),
+  };
+  const campoNombre = pasos.nombre.querySelector('input');
+  const listaRegalos = modal.querySelector('.lista-regalos');
+  const botonAceptar = modal.querySelector('.aceptar');
+  const miRegalo = modal.querySelector('.mi-regalo');
+  const conInvitado = texto => texto.replace('{invitado}', invitado);
+  let invitado = '';
+  let regalos = [];
+
+  // El nombre se recuerda en este navegador para no pedirlo cada vez
+  const recordado = { leer() { try { return localStorage.getItem('invitado') || ''; } catch (e) { return ''; } },
+    guardar(v) { try { localStorage.setItem('invitado', v); } catch (e) { /* sin almacenamiento */ } } };
+
+  // Los regalos elegidos desde este navegador, para mostrárselos al invitado cuando vuelva
+  const misRegalos = {
+    leer() { try { return JSON.parse(localStorage.getItem('misRegalos')) || []; } catch (e) { return []; } },
+    guardar(lista) { try { localStorage.setItem('misRegalos', JSON.stringify(lista)); } catch (e) { /* sin almacenamiento */ } },
+  };
+  const esMio = (r, mios) => r.elegido && mios.some(m => m.fila === r.fila && m.nombre === r.nombre);
+  const unir = nombres => (nombres.length > 1 ? `${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}` : nombres[0]);
+
+  // Sin número de destino: WhatsApp deja elegir el chat (por ejemplo, el propio "Tú")
+  function enlaceWhatsapp(nombres) {
+    const f = C.fecha;
+    const texto = R.whatsapp
+      .replace('{bebe}', C.bebe.nombre.trim())
+      .replace('{regalo}', unir(nombres))
+      .replace('{fecha}', `${f.diaSemana} ${f.dia} de ${f.mes} de ${f.anio}`)
+      .replace('{hora}', f.hora)
+      .replace('{lugar}', `${C.lugar.nombre} – ${C.lugar.direccion.replace(/\s*\n\s*/g, ' ')}`);
+    return `https://wa.me/?text=${encodeURIComponent(texto)}`;
+  }
+
+  function error(paso, mensaje = '') {
+    const linea = paso.querySelector('.modal-error');
+    if (linea) linea.textContent = mensaje;
+  }
+
+  function mostrarPaso(nombre) {
+    Object.entries(pasos).forEach(([k, el]) => { el.hidden = k !== nombre; error(el); });
+  }
+
+  async function pedir(opciones) {
+    if (!R.urlScript) throw new Error('Falta configurar regalos.urlScript en js/config.js');
+    const respuesta = await fetch(R.urlScript, opciones);
+    const datos = await respuesta.json();
+    if (!datos.ok) throw Object.assign(new Error(datos.error), { codigo: datos.error });
+    return datos;
+  }
+
+  // Primero los disponibles, luego los elegidos; cada grupo en orden alfabético
+  const ordenar = (a, b) => a.elegido - b.elegido || a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base', numeric: true });
+
+  function pintarMiRegalo(mios) {
+    miRegalo.hidden = !mios.length;
+    if (!mios.length) return;
+    const nombres = mios.map(m => m.nombre);
+    miRegalo.querySelector('.mi-regalo-nombre').textContent = unir(nombres);
+    miRegalo.querySelector('.mi-regalo-whatsapp').href = enlaceWhatsapp(nombres);
+  }
+
+  function pintarLista() {
+    // Si los papás liberaron un regalo en la hoja, deja de recordarse como propio
+    const mios = misRegalos.leer().filter(m => regalos.some(r => esMio(r, [m])));
+    misRegalos.guardar(mios);
+    pintarMiRegalo(mios);
+    const disponibles = regalos.filter(r => !r.elegido).length;
+    listaRegalos.innerHTML = [...regalos].sort(ordenar).map(r => {
+      const mio = esMio(r, mios);
+      return `
+      <li><label class="regalo${r.elegido ? ' elegido' : ''}${mio ? ' mio' : ''}">
+        <input type="radio" name="regalo" value="${r.fila}"${r.elegido ? ' disabled' : ''}>
+        <span class="regalo-nombre">${escapar(r.nombre)}</span>
+        ${r.elegido ? `<span class="regalo-estado">${escapar(mio ? R.tuEleccion : R.yaElegido)}</span>` : ''}
+      </label></li>`;
+    }).join('');
+    if (!disponibles) listaRegalos.insertAdjacentHTML('afterbegin', `<li class="lista-aviso">${escapar(R.sinRegalos)}</li>`);
+    botonAceptar.disabled = true;
+  }
+
+  async function cargarLista() {
+    listaRegalos.innerHTML = '<li class="lista-aviso">Cargando regalos…</li>';
+    miRegalo.hidden = true;
+    botonAceptar.disabled = true;
+    try {
+      regalos = (await pedir()).regalos;
+      pintarLista();
+    } catch (e) {
+      console.error(e);
+      listaRegalos.innerHTML = '<li class="lista-aviso">No pudimos cargar la lista. <button type="button" class="modal-enlace reintentar">Reintentar</button></li>';
+    }
+  }
+
+  function abrirRegalos() {
+    campoNombre.value = invitado || recordado.leer();
+    mostrarPaso('nombre');
+    modal.showModal();
+    document.body.classList.add('modal-abierto');
+    campoNombre.focus();
+  }
+
+  pasos.nombre.addEventListener('submit', e => {
+    e.preventDefault();
+    invitado = campoNombre.value.trim().replace(/\s+/g, ' ');
+    if (invitado.length < 2) {
+      error(pasos.nombre, 'Por favor, escribe tu nombre.');
+      campoNombre.focus();
+      return;
+    }
+    recordado.guardar(invitado);
+    pasos.lista.querySelector('.saludo').textContent = conInvitado(R.eligeRegalo);
+    mostrarPaso('lista');
+    cargarLista();
+  });
+
+  listaRegalos.addEventListener('change', () => { botonAceptar.disabled = false; error(pasos.lista); });
+  listaRegalos.addEventListener('click', e => { if (e.target.closest('.reintentar')) cargarLista(); });
+  modal.querySelector('.cambiar-nombre').addEventListener('click', () => { mostrarPaso('nombre'); campoNombre.focus(); });
+
+  pasos.lista.addEventListener('submit', async e => {
+    e.preventDefault();
+    const marcado = listaRegalos.querySelector('input:checked');
+    if (!marcado) return;
+    const regalo = regalos.find(r => String(r.fila) === marcado.value);
+    botonAceptar.disabled = true;
+    pasos.lista.setAttribute('aria-busy', 'true');
+    try {
+      // Cuerpo como texto plano: así el navegador no hace la consulta previa (CORS) que Apps Script no admite
+      await pedir({ method: 'POST', body: JSON.stringify({ fila: regalo.fila, regalo: regalo.nombre, invitado }) });
+      regalo.elegido = true;
+      misRegalos.guardar([...misRegalos.leer(), { fila: regalo.fila, nombre: regalo.nombre }]);
+      pasos.gracias.querySelector('.boton-whatsapp').href = enlaceWhatsapp([regalo.nombre]);
+      pasos.gracias.querySelector('.gracias-texto').innerHTML = escapar(conInvitado(R.gracias)).replace(/\n/g, '<br>');
+      pasos.gracias.querySelector('.regalo-elegido').textContent = regalo.nombre;
+      mostrarPaso('gracias');
+    } catch (err) {
+      console.error(err);
+      if (err.codigo === 'ya-elegido' || err.codigo === 'no-encontrado') {
+        await cargarLista();
+        error(pasos.lista, '¡Ups! Alguien acaba de elegir ese regalo. Por favor, elige otro.');
+      } else {
+        botonAceptar.disabled = false;
+        error(pasos.lista, 'No pudimos guardar tu elección. Revisa tu conexión e inténtalo de nuevo.');
+      }
+    } finally {
+      pasos.lista.removeAttribute('aria-busy');
+    }
+  });
+
+  const abrir = document.querySelector('.abrir-regalos');
+  abrir.setAttribute('aria-label', R.boton.replace(/\n/g, ' '));
+  abrir.addEventListener('click', abrirRegalos);
+  $$('[data-cerrar]', modal).forEach(b => b.addEventListener('click', () => modal.close()));
+  // Tocar fuera del recuadro también cierra
+  modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+  modal.addEventListener('close', () => document.body.classList.remove('modal-abierto'));
 
   // ---------- Animaciones al entrar en pantalla ----------
   const animables = sel => $$('.anim-entrar-izq, .anim-letras, .anim-flotar, .anim-latido', document.querySelector(sel));

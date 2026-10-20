@@ -1,14 +1,12 @@
 /*
  * Datos de la invitación. Edita este archivo para personalizarla.
  * - "\n" fuerza un salto de línea en el texto.
- * - Los números de WhatsApp van con código de país y sin "+", espacios ni guiones
- *   (ejemplo Bolivia: "59171234567").
  */
 window.INVITACION = {
-  tituloPagina: 'Baby Shower de José Arath',
+  tituloPagina: 'Baby Shower de Yarek Elías',
 
   bebe: {
-    nombre: 'José Arath',
+    nombre: 'Yarek Elías ',
   },
 
   titulo: 'Mi Baby Shower',
@@ -16,54 +14,60 @@ window.INVITACION = {
 
   padres: {
     etiqueta: 'Mis Papis',
-    nombres: 'David & Belén',
+    nombres: 'Iván & Katherine',
   },
 
   fecha: {
-    diaSemana: 'Sábado',
-    dia: '14',
-    mes: 'diciembre',
-    anio: '2025',
-    hora: '14:00 hrs',
+    diaSemana: 'Domingo',
+    dia: '08',
+    mes: 'noviembre',
+    anio: '2026',
+    hora: '04:00 pm',
   },
 
   lugar: {
     titulo: 'Recepción',
     nombre: '“Lavie eventos infantiles”',
-    direccion: 'Daniel Pena San 2764,\nCochabamba, Bolivia',
+    direccion: 'Jirón Manco Segundo 550,\nSan Miguel',
     // Enlace del botón "Mapa de ubicación"
-    mapaUrl: 'https://maps.app.goo.gl/vphJ8iuBeoLSiiw78',
+    mapaUrl: 'https://maps.app.goo.gl/m3dajDVcLEF53yGZ6',
     // Lo que se busca en el mapa incrustado
-    mapaBusqueda: 'Daniel Pena San 2764, Cochabamba, Bolivia',
+    mapaBusqueda: 'Jirón Manco Segundo 550, San Miguel, Lima',
   },
 
-  confirmacion: {
-    titulo: 'Confirmación',
-    texto: 'Nos encantará saber que nos acompañarás, permítenos preparar los detalles confirmando tu asistencia.',
-    // {nombre} se reemplaza por el nombre del bebé
-    mensaje: '¡Hola! 🐝 Confirmo mi asistencia al Baby Shower de {nombre}. Mi nombre es: ',
-    mama: {
-      etiqueta: 'Confirmar\nasistencia a mamá',
-      whatsapp: '59170000001', // TODO: reemplazar por el número real
-    },
-    papa: {
-      etiqueta: 'Confirmar\nasistencia a papá',
-      whatsapp: '59170000002', // TODO: reemplazar por el número real
-    },
+  regalos: {
+    titulo: 'Lista de regalos',
+    texto: 'mami y papi han preparado una lista de cositas que necesitaré cuando llegue, puedes seleccionar un regalito para mi, gracias por tanto amor',
+    boton: 'Ver lista\nde regalos',
+    // URL de la aplicación web de Google Apps Script (termina en /exec). Ver README → "Lista de regalos".
+    urlScript: 'https://script.google.com/macros/s/AKfycbzKjkGNcDjCAuJeoEhIF1DCspGD31q0x9Ia8HtziVgzUKIsYLXfI6BePecWhDrtwX1s/exec', // TODO: pegar la URL de la implementación
+    // Textos del modal. {invitado} se reemplaza por el nombre que escribe el invitado.
+    pideNombre: 'Para comenzar, cuéntanos tu nombre:',
+    eligeRegalo: '¡Hola, {invitado}! Elige el regalo que te gustaría traer:',
+    yaElegido: 'Ya elegido',
+    sinRegalos: '¡Todos los regalos ya fueron elegidos! Gracias por tu cariño.',
+    gracias: '¡Gracias, {invitado}! 🐝\nRegistramos que traerás:',
+    recordatorio: 'Lo verás aquí cuando vuelvas a abrir la lista. También puedes guardarlo en WhatsApp:',
+    // Al volver a abrir la lista, el invitado ve lo que eligió desde su teléfono
+    miRegalo: 'Ya elegiste:',
+    tuEleccion: 'Tu elección',
+    botonWhatsapp: 'Guardar en WhatsApp',
+    // Mensaje que el invitado se envía a sí mismo. {bebe}, {regalo}, {fecha}, {hora} y {lugar} se completan solos.
+    whatsapp: '🎁 Mi regalo para el Baby Shower de {bebe}: {regalo}\n📅 {fecha}, {hora}\n📍 {lugar}',
   },
-
-  regalo: 'Si te gustaría hacer la llegada de\nnuestro bebito mas cómoda puedes\ntraer un presente.',
 
   gracias: {
     titulo: 'Gracias',
     texto: 'por ser parte de este\ndía especial',
   },
 
-  // Las fotos nuevas se recortan automáticamente para llenar su marco
+  // Las fotos nuevas se recortan automáticamente para llenar su marco.
+  // Si reemplazas una foto con el mismo nombre, sube el número de "?v=" para que
+  // los navegadores no sigan mostrando la versión anterior guardada en caché.
   fotos: {
-    portada: 'assets/img/foto-papas-1.jpg',
-    papas: 'assets/img/foto-papas-2.jpg',
-    ecografia: 'assets/img/ecografia.jpg',
+    portada: 'assets/img/foto-papas-1.jpg?v=2',
+    papas: 'assets/img/foto-papas-2.jpg?v=2',
+    ecografia: 'assets/img/ecografia.jpg?v=2',
   },
 
   musica: 'assets/audio/musica.m4a',

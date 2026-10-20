@@ -115,6 +115,7 @@ img.l, .l > img { display: block; }
 .a-center { text-align: center; }
 .a-right { text-align: right; }
 .mayus { text-transform: uppercase; }
+.una-linea { white-space: nowrap; }
 .subrayado { text-decoration: underline; text-underline-offset: 0.12em; }
 
 .curvo { overflow: visible; }
@@ -169,6 +170,8 @@ img.l, .l > img { display: block; }
   background: var(--fondo);
   border-radius: calc(3.9 * var(--u));
 }
+button.boton { border: 0; }
+.boton:disabled { opacity: 0.5; cursor: default; filter: none; scale: 1; }
 .boton.subrayado > span { text-decoration: underline; text-underline-offset: 0.12em; }
 .boton:hover { filter: brightness(1.05); }
 .boton:active { scale: 0.96; }
@@ -261,6 +264,244 @@ img.l, .l > img { display: block; }
 .sonando .musica-flotante { animation: latido 1.6s ease-in-out infinite; }
 body.en-invitacion .musica-flotante { display: grid; }
 
+/* ---------- Lista de regalos ---------- */
+/* Texto y botón en flujo: el botón baja solo si el texto ocupa más líneas */
+.bloque-regalos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(14 * var(--u));
+  height: auto;
+}
+.bloque-regalos .boton { flex: none; width: calc(169 * var(--u)); height: calc(47 * var(--u)); }
+
+/* ---------- Modal: lista de regalos ---------- */
+.modal-regalos {
+  /* Misma unidad que el lienzo de la invitación, así textos y botones miden igual */
+  --u: calc(min(100vw, 480px) / 375);
+  width: min(100vw - 32px, 340 * var(--u));
+  max-width: none;
+  max-height: calc(100svh - 32px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+  color: #5b3a04;
+}
+.modal-regalos[open] { animation: modal-entrar 0.35s ease both; }
+.modal-regalos::backdrop { background: rgba(91, 58, 4, 0.45); backdrop-filter: blur(2px); }
+body.modal-abierto { overflow: hidden; }
+
+/* Recuadro en forma de arco, como los fondos de cada sección */
+.modal-caja {
+  position: relative;
+  max-height: calc(100svh - 32px);
+  overflow-y: auto;
+  padding: calc(14 * var(--u)) calc(18 * var(--u)) calc(20 * var(--u));
+  border: calc(2.5 * var(--u)) solid #5b3a04;
+  border-radius: 50% 50% calc(14 * var(--u)) calc(14 * var(--u)) / calc(64 * var(--u)) calc(64 * var(--u)) calc(14 * var(--u)) calc(14 * var(--u));
+  background: #d4edff;
+  box-shadow: 0 10px 40px rgba(90, 70, 20, 0.3);
+  text-align: center;
+}
+
+.modal-cerrar {
+  position: absolute;
+  top: calc(40 * var(--u));
+  right: calc(14 * var(--u));
+  display: grid;
+  place-items: center;
+  width: calc(30 * var(--u));
+  height: calc(30 * var(--u));
+  padding: 0;
+  border: calc(2 * var(--u)) solid #5b3a04;
+  border-radius: 50%;
+  background: #ffe499;
+  color: #5b3a04;
+  cursor: pointer;
+}
+.modal-cerrar svg { width: 55%; height: 55%; }
+
+.modal-icono { display: block; width: calc(40 * var(--u)); height: calc(45 * var(--u)); margin: calc(4 * var(--u)) auto 0; }
+.modal-titulo {
+  margin: 0;
+  font-size: calc(25.62 * var(--u));
+  line-height: calc(35.69 * var(--u));
+  font-weight: 400;
+}
+
+.paso[hidden] { display: none; }
+.modal-texto {
+  display: block;
+  margin: calc(4 * var(--u)) 0 calc(12 * var(--u));
+  font-size: calc(17.27 * var(--u));
+  line-height: calc(21.18 * var(--u));
+}
+
+/* max(16px): en iPhone un campo con letra menor hace zoom al tocarlo */
+.modal-campo {
+  width: 100%;
+  padding: calc(10 * var(--u)) calc(12 * var(--u));
+  border: calc(2 * var(--u)) solid #5b3a04;
+  border-radius: calc(4.4 * var(--u));
+  background: #fffaf0;
+  color: #5b3a04;
+  font-size: max(16px, 17.91 * var(--u));
+  text-align: center;
+}
+
+.modal-error {
+  margin: calc(10 * var(--u)) 0 0;
+  color: #a12a12;
+  font-size: calc(15.5 * var(--u));
+  line-height: 1.25;
+}
+.modal-error:empty { display: none; }
+
+.modal-boton {
+  --bx: 5.1; --by: 2.49; --fs: 17.91; --lh: 15.65; --ls: -0.09;
+  --fondo: #ffe499;
+  --borde: #5b3a04;
+  width: calc(140 * var(--u));
+  height: calc(47 * var(--u));
+  margin: calc(16 * var(--u)) auto 0;
+  color: #5b3a04;
+}
+
+.modal-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(12 * var(--u));
+  margin-top: calc(14 * var(--u));
+}
+.modal-acciones .modal-boton { margin: 0; }
+
+.modal-enlace {
+  padding: calc(4 * var(--u));
+  border: 0;
+  background: none;
+  color: #5b3a04;
+  font-family: 'Invitacion Italica', serif;
+  font-size: calc(16 * var(--u));
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  cursor: pointer;
+}
+
+.lista-marco { min-width: 0; margin: 0; padding: 0; border: 0; }
+.lista-regalos {
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+  max-height: min(50svh, 360 * var(--u));
+  margin: 0;
+  padding: calc(3 * var(--u));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #5b3a04 transparent;
+  list-style: none;
+}
+
+.regalo {
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--u));
+  padding: calc(10 * var(--u)) calc(12 * var(--u));
+  border: calc(2 * var(--u)) solid #5b3a04;
+  border-radius: calc(4.4 * var(--u));
+  background: #fffaf0;
+  font-family: 'Invitacion Serif', serif;
+  font-size: calc(16.5 * var(--u));
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.regalo:hover { background: #fff3cf; }
+.regalo:has(input:checked) { background: #ffe499; }
+.regalo-nombre { flex: 1; }
+
+/* Círculo de selección con el estilo de los botones */
+.regalo input {
+  appearance: none;
+  display: grid;
+  place-content: center;
+  flex: none;
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
+  margin: 0;
+  border: calc(2 * var(--u)) solid #5b3a04;
+  border-radius: 50%;
+  background: #fff;
+}
+.regalo input::before {
+  content: '';
+  width: calc(10 * var(--u));
+  height: calc(10 * var(--u));
+  border-radius: 50%;
+  background: #5b3a04;
+  scale: 0;
+  transition: scale 0.15s ease;
+}
+.regalo input:checked::before { scale: 1; }
+
+.regalo.elegido { border-style: dashed; background: rgba(255, 250, 240, 0.5); opacity: 0.65; cursor: default; }
+.regalo.elegido .regalo-nombre { text-decoration: line-through; }
+.regalo-estado { flex: none; font-family: 'Invitacion Italica', serif; font-size: calc(14 * var(--u)); }
+
+/* Regalo elegido desde este navegador: se destaca en lugar de verse tachado */
+.regalo.mio { border-style: solid; background: #fff3cf; opacity: 1; }
+.regalo.mio .regalo-nombre { text-decoration: none; }
+.regalo.mio input::before { scale: 1; }
+
+.mi-regalo {
+  margin: 0 0 calc(12 * var(--u));
+  padding: calc(10 * var(--u)) calc(12 * var(--u));
+  border: calc(2 * var(--u)) dashed #5b3a04;
+  border-radius: calc(4.4 * var(--u));
+  background: #fffaf0;
+}
+.mi-regalo p { margin: 0; font-size: calc(16.5 * var(--u)); line-height: 1.3; }
+.mi-regalo-nombre { font-size: calc(17.5 * var(--u)); }
+.mi-regalo-whatsapp { display: inline-block; margin-top: calc(4 * var(--u)); font-size: calc(15 * var(--u)); }
+
+.lista-aviso {
+  padding: calc(14 * var(--u)) calc(6 * var(--u));
+  font-family: 'Invitacion Italica', serif;
+  font-size: calc(16.5 * var(--u));
+}
+
+.regalo-elegido {
+  margin: 0;
+  padding: calc(12 * var(--u));
+  border: calc(2 * var(--u)) dashed #5b3a04;
+  border-radius: calc(4.4 * var(--u));
+  background: #fffaf0;
+  font-size: calc(20 * var(--u));
+  line-height: 1.2;
+}
+
+.recordatorio {
+  margin: calc(14 * var(--u)) 0 0;
+  font-size: calc(15.5 * var(--u));
+  line-height: calc(19 * var(--u));
+}
+.modal-boton.boton-whatsapp { width: calc(210 * var(--u)); margin-top: calc(10 * var(--u)); }
+.cerrar-gracias { display: block; margin: calc(10 * var(--u)) auto 0; }
+
+.modal-cerrar:focus-visible, .modal-campo:focus-visible, .modal-enlace:focus-visible, .regalo input:focus-visible { outline: 3px solid #5b3a04; outline-offset: 2px; }
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* ---------- Animaciones ---------- */
 /* Apertura del sobre */
 .sobre, .sello, .sello-texto, .cursor { transition: scale 0.6s ease, opacity 0.6s ease; }
@@ -272,7 +513,7 @@ body.en-invitacion .musica-flotante { display: grid; }
 .anim-entrar-izq { translate: calc(var(--dx, 20) * var(--u) * -1) 0; transition: translate 1.2s cubic-bezier(0.22, 0.8, 0.3, 1); }
 .anim-entrar-izq.visible { translate: 0 0; }
 .titulo-recepcion { --dx: 108; }
-.titulo-confirmacion { --dx: 170; }
+.titulo-regalos { --dx: 170; }
 
 /* Letras que aparecen una a una */
 .anim-letras .letra, .anim-letras .tilde { fill-opacity: 0; stroke-opacity: 0; }
@@ -290,6 +531,7 @@ body.en-invitacion .musica-flotante { display: grid; }
 @keyframes latido { 0%, 100% { scale: 1; } 50% { scale: 1.03; } }
 @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
 @keyframes desaparecer { from { opacity: 1; } to { opacity: 0; } }
+@keyframes modal-entrar { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
