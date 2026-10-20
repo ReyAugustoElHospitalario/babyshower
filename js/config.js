@@ -42,7 +42,7 @@ window.INVITACION = {
     // URL de la aplicación web de Google Apps Script (termina en /exec). Ver README → "Lista de regalos".
     urlScript: 'https://script.google.com/macros/s/AKfycbzKjkGNcDjCAuJeoEhIF1DCspGD31q0x9Ia8HtziVgzUKIsYLXfI6BePecWhDrtwX1s/exec', // TODO: pegar la URL de la implementación
     // Textos del modal. {invitado} se reemplaza por el nombre que escribe el invitado.
-    pideNombre: 'Para comenzar, cuéntanos tu nombre:',
+    pideNombre: 'Para comenzar, dime tu nombre y apellido:',
     eligeRegalo: '¡Hola, {invitado}! Elige el regalo que te gustaría traer:',
     yaElegido: 'Ya elegido',
     sinRegalos: '¡Todos los regalos ya fueron elegidos! Gracias por tu cariño.',
