@@ -27,7 +27,7 @@ window.INVITACION = {
 
   lugar: {
     titulo: 'Recepción',
-    nombre: '“Lavie eventos infantiles”',
+    // nombre: '“Lavie eventos infantiles”',
     direccion: 'Jirón Manco Segundo 550,\nSan Miguel',
     // Enlace del botón "Mapa de ubicación"
     mapaUrl: 'https://maps.app.goo.gl/m3dajDVcLEF53yGZ6',

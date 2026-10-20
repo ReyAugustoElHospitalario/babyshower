@@ -84,8 +84,14 @@
 
   $$('[data-campo]').forEach(el => {
     const valor = get(el.dataset.campo);
-    if (valor == null) return;
-    if (el.tagName.toLowerCase() === 'textpath') textoCurvo(el, valor);
+    const esCurvo = el.tagName.toLowerCase() === 'textpath';
+    // Un dato comentado o vacío en config.js no se muestra (ni deja su hueco donde el diseño fluye)
+    if (valor == null || valor === '') {
+      if (esCurvo) el.textContent = '';
+      else el.hidden = true;
+      return;
+    }
+    if (esCurvo) textoCurvo(el, valor);
     else textoHTML(el, valor);
   });
 
@@ -152,7 +158,7 @@
       .replace('{regalo}', unir(nombres))
       .replace('{fecha}', `${f.diaSemana} ${f.dia} de ${f.mes} de ${f.anio}`)
       .replace('{hora}', f.hora)
-      .replace('{lugar}', `${C.lugar.nombre} – ${C.lugar.direccion.replace(/\s*\n\s*/g, ' ')}`);
+      .replace('{lugar}', [C.lugar.nombre, C.lugar.direccion].filter(Boolean).join(' – ').replace(/\s*\n\s*/g, ' '));
     return `https://wa.me/?text=${encodeURIComponent(texto)}`;
   }
 

@@ -24,6 +24,9 @@
 
 html, body { margin: 0; }
 
+/* Los datos comentados o vacíos en config.js se ocultan (ver app.js) */
+[hidden] { display: none !important; }
+
 body {
   min-height: 100svh;
   background: #fff;
@@ -263,6 +266,9 @@ button.boton { border: 0; }
 .sonando .musica-flotante .i-pausa { display: block; }
 .sonando .musica-flotante { animation: latido 1.6s ease-in-out infinite; }
 body.en-invitacion .musica-flotante { display: grid; }
+
+/* ---------- Lugar ---------- */
+.bloque-lugar { height: auto; }
 
 /* ---------- Lista de regalos ---------- */
 /* Texto y botón en flujo: el botón baja solo si el texto ocupa más líneas */

@@ -16,6 +16,7 @@ archivo con doble clic) para que carguen las fuentes y el mapa.
 
 Todos los datos están en [`js/config.js`](js/config.js): nombre del bebé, papás, fecha,
 lugar, textos, lista de regalos, fotos y música. Usa `\n` para forzar un salto de línea.
+Si comentas (`//`) o dejas vacío un texto, no se muestra en la invitación.
 
 - **Lista de regalos**: ver la sección siguiente. Los textos del modal están en `regalos`.
 - **Fotos**: copia tus imágenes en `assets/img/` y actualiza `fotos`. Se recortan solas
