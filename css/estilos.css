@@ -1,0 +1,299 @@
+/* ---------- Fuentes (extraídas del diseño original) ---------- */
+@font-face { font-family: 'Cinzel'; src: url(../assets/fonts/cinzel-bold.woff2) format('woff2'); font-display: block; }
+@font-face { font-family: 'Happy Selfie'; src: url(../assets/fonts/happy-selfie.woff) format('woff'); font-display: block; }
+@font-face { font-family: 'Happy Beige'; src: url(../assets/fonts/happy-beige.woff) format('woff'); font-display: block; }
+@font-face { font-family: 'Invitacion Serif'; src: url(../assets/fonts/serif-regular.woff) format('woff'); font-weight: 400; font-display: block; }
+@font-face { font-family: 'Invitacion Serif'; src: url(../assets/fonts/serif-bold.woff) format('woff'); font-weight: 700; font-display: block; }
+@font-face { font-family: 'Invitacion Italica'; src: url(../assets/fonts/serif-italic.woff) format('woff'); font-display: block; }
+@font-face { font-family: 'Invitacion Numeros'; src: url(../assets/fonts/serif-numeros.woff) format('woff'); font-display: block; }
+@font-face { font-family: 'Invitacion Hora'; src: url(../assets/fonts/serif-hora.woff) format('woff'); font-display: block; }
+
+.f-cinzel { font-family: 'Cinzel', serif; }
+.f-happy-selfie { font-family: 'Happy Selfie', cursive; }
+.f-happy-beige { font-family: 'Happy Beige', cursive; }
+.f-serif { font-family: 'Invitacion Serif', serif; }
+.f-italica { font-family: 'Invitacion Italica', serif; }
+.f-numeros { font-family: 'Invitacion Numeros', serif; }
+.f-hora { font-family: 'Invitacion Hora', serif; }
+/* Cada archivo ya es el peso/estilo exacto: sin negritas ni cursivas sintéticas */
+.f-serif:not(.boton) { font-weight: 400; }
+.boton.f-serif { font-weight: 700; }
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  min-height: 100svh;
+  background: #fff;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mismo fondo acuarela que el diseño, para los márgenes en pantallas anchas */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url(../assets/img/fondo-acuarela.jpg) center / cover;
+  opacity: 0.43;
+}
+
+/* ---------- Pantallas ---------- */
+.pantalla { display: none; }
+.pantalla.activa { display: block; animation: aparecer 0.7s ease both; }
+.pantalla.saliendo { animation: desaparecer 0.6s ease both; }
+
+/* ---------- Escenario: lienzo de 375 unidades de ancho que escala con la pantalla ---------- */
+.marco {
+  container-type: inline-size;
+  width: min(100vw, 480px);
+  margin: 0 auto;
+}
+/* La portada siempre cabe completa en la pantalla */
+#portada .marco { width: min(100vw, 480px, 100svh * 375 / 812); }
+
+.escenario {
+  --u: calc(100cqw / 375);
+  position: relative;
+  width: 100%;
+  height: calc(var(--alto) * var(--u));
+  overflow: hidden;
+  background: #fff;
+}
+
+@media (min-width: 520px) {
+  .escenario { box-shadow: 0 10px 40px rgba(90, 70, 20, 0.18); }
+  #invitacion .marco { margin-block: 24px; }
+}
+
+/* Capa genérica: posición, tamaño y giro en unidades del diseño */
+.l {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  margin: 0;
+  max-width: none;
+  transform: rotate(calc(var(--r, 0) * 1deg)) scale(var(--sx, 1), var(--sy, 1));
+  opacity: var(--o, 1);
+}
+img.l, .l > img { display: block; }
+
+/* Imagen recortada dentro de su caja */
+.recuadro { overflow: hidden; }
+.recuadro > img {
+  position: absolute;
+  left: calc(var(--ix) * var(--u));
+  top: calc(var(--iy) * var(--u));
+  width: calc(var(--iw) * var(--u));
+  height: calc(var(--ih) * var(--u));
+  max-width: none;
+  object-fit: cover;
+}
+
+/* Recorte rectangular heredado del diseño */
+.recorte {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: inset(calc(var(--ct) * var(--u)) calc(var(--cr) * var(--u)) calc(var(--cb) * var(--u)) calc(var(--cl) * var(--u)));
+}
+
+/* ---------- Textos ---------- */
+.t {
+  top: calc((var(--y) + var(--pt, 0)) * var(--u));
+  height: auto;
+  font-size: calc(var(--fs) * var(--u));
+  line-height: calc(var(--lh) * var(--u));
+  letter-spacing: calc(var(--ls, 0) * var(--u));
+}
+.a-center { text-align: center; }
+.a-right { text-align: right; }
+.mayus { text-transform: uppercase; }
+.subrayado { text-decoration: underline; text-underline-offset: 0.12em; }
+
+.curvo { overflow: visible; }
+.curvo text.tilde { font-family: Arial, Helvetica, sans-serif; font-weight: 700; }
+
+/* Tilde dibujada encima de una letra (las fuentes "Happy" no traen acentos) */
+.acento { position: relative; }
+.acento::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0.12em;
+  width: 0.1em;
+  height: 0.29em;
+  margin-left: -0.02em;
+  border-radius: 0.05em;
+  background: currentColor;
+  transform: rotate(38deg);
+}
+.acento.sobre-i::after { top: -0.04em; }
+.acento.glifo::after {
+  content: attr(data-tilde);
+  width: auto;
+  height: auto;
+  top: -0.3em;
+  margin-left: 0;
+  background: none;
+  transform: translateX(-50%);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ---------- Botones ---------- */
+.boton {
+  display: flex;
+  padding: calc(var(--by) * var(--u)) calc(var(--bx) * var(--u));
+  background: var(--borde);
+  border-radius: calc(4.4 * var(--u));
+  font-size: calc(var(--fs) * var(--u));
+  line-height: calc(var(--lh) * var(--u));
+  letter-spacing: calc(var(--ls, 0) * var(--u));
+  text-decoration: none;
+  cursor: pointer;
+  transition: scale 0.15s ease, filter 0.15s ease;
+}
+.boton > span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--fondo);
+  border-radius: calc(3.9 * var(--u));
+}
+.boton.subrayado > span { text-decoration: underline; text-underline-offset: 0.12em; }
+.boton:hover { filter: brightness(1.05); }
+.boton:active { scale: 0.96; }
+.boton:focus-visible, .abrir-sobre:focus-visible, .boton-musica:focus-visible { outline: 3px solid #5b3a04; outline-offset: 3px; }
+
+/* Botón para abrir el sobre (zona transparente sobre el sobre y el sello) */
+.abrir-sobre {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: calc(8 * var(--u));
+}
+
+/* ---------- Mapa ---------- */
+/* Como en el original: el mapa se dibuja a 600×450 y se reduce, así los controles quedan pequeños */
+.mapa { overflow: hidden; background: #e5e3df; }
+.mapa iframe {
+  width: calc(600 / 247 * 100%);
+  height: calc(450 / 185 * 100%);
+  border: 0;
+  transform: scale(calc(247 / 600));
+  transform-origin: 0 0;
+}
+
+/* ---------- Música ---------- */
+.boton-musica {
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+.boton-musica > img { width: 100%; height: 100%; }
+.icono-musica {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56%;
+  height: 56%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: rgba(60, 60, 60, 0.85);
+}
+.icono-musica::before,
+.icono-musica::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+/* Triángulo de "play" */
+.icono-musica::before {
+  translate: -35% -50%;
+  border-style: solid;
+  border-width: calc(6 * var(--u)) 0 calc(6 * var(--u)) calc(10 * var(--u));
+  border-color: transparent transparent transparent #fff;
+}
+/* Barras de "pausa" */
+.sonando .icono-musica::before {
+  translate: -50% -50%;
+  width: calc(9 * var(--u));
+  height: calc(11 * var(--u));
+  border: 0;
+  border-inline: calc(3 * var(--u)) solid #fff;
+}
+.sonando .musica-fondo { animation: latido 1.6s ease-in-out infinite; }
+
+/* Botón flotante, siempre visible en la invitación */
+.musica-flotante {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 10;
+  display: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #ffe499;
+  color: #5b3a04;
+  box-shadow: 0 4px 14px rgba(90, 58, 4, 0.3);
+  cursor: pointer;
+}
+.musica-flotante svg { width: 22px; height: 22px; }
+.musica-flotante .i-pausa,
+.sonando .musica-flotante .i-play { display: none; }
+.sonando .musica-flotante .i-pausa { display: block; }
+.sonando .musica-flotante { animation: latido 1.6s ease-in-out infinite; }
+body.en-invitacion .musica-flotante { display: grid; }
+
+/* ---------- Animaciones ---------- */
+/* Apertura del sobre */
+.sobre, .sello, .sello-texto, .cursor { transition: scale 0.6s ease, opacity 0.6s ease; }
+.abriendo .sello, .abriendo .sello-texto { scale: 1.35; opacity: 0; }
+.abriendo .sobre { scale: 1.08; opacity: 0; }
+.abriendo .cursor { opacity: 0; }
+
+/* Entrada deslizándose desde la izquierda */
+.anim-entrar-izq { translate: calc(var(--dx, 20) * var(--u) * -1) 0; transition: translate 1.2s cubic-bezier(0.22, 0.8, 0.3, 1); }
+.anim-entrar-izq.visible { translate: 0 0; }
+.titulo-recepcion { --dx: 108; }
+.titulo-confirmacion { --dx: 170; }
+
+/* Letras que aparecen una a una */
+.anim-letras .letra, .anim-letras .tilde { fill-opacity: 0; stroke-opacity: 0; }
+.anim-letras.visible .letra, .anim-letras.visible .tilde { animation: letra 0.45s ease both; animation-delay: calc(var(--i) * 70ms); }
+
+/* Abeja que aparece y flota */
+.anim-flotar { opacity: 0; transition: opacity 1.2s ease; }
+.anim-flotar.visible { opacity: var(--o, 1); animation: flotar 5s ease-in-out infinite alternate; }
+
+/* Latido suave de la foto */
+.anim-latido.visible { animation: latido 3s ease-in-out infinite; }
+
+@keyframes letra { from { fill-opacity: 0; stroke-opacity: 0; } to { fill-opacity: 1; stroke-opacity: 1; } }
+@keyframes flotar { from { translate: 0 0; } to { translate: calc(9 * var(--u)) calc(-3 * var(--u)); } }
+@keyframes latido { 0%, 100% { scale: 1; } 50% { scale: 1.03; } }
+@keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+@keyframes desaparecer { from { opacity: 1; } to { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .anim-entrar-izq { translate: 0 0; }
+  .anim-flotar { opacity: var(--o, 1); }
+  .anim-letras .letra, .anim-letras .tilde { fill-opacity: 1; stroke-opacity: 1; }
+}
