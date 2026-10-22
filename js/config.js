@@ -47,11 +47,11 @@ window.INVITACION = {
     yaElegido: 'Ya elegido',
     sinRegalos: '¡Todos los regalos ya fueron elegidos! Gracias por tu cariño.',
     gracias: '¡Gracias, {invitado}! 🐝\nRegistramos que traerás:',
-    recordatorio: 'Lo verás aquí cuando vuelvas a abrir la lista. También puedes guardarlo en WhatsApp:',
+    recordatorio: 'Envia un rocordatorio del regalo que elegí a mi mamita o papito en WhatsApp:',
     // Al volver a abrir la lista, el invitado ve lo que eligió desde su teléfono
     miRegalo: 'Ya elegiste:',
     tuEleccion: 'Tu elección',
-    botonWhatsapp: 'Enviar a mi WhatsApp',
+    botonWhatsapp: 'Enviar a WhatsApp',
     // Mensaje que el invitado se envía a sí mismo. {bebe}, {regalo}, {fecha}, {hora} y {lugar} se completan solos.
     whatsapp: '🎁 Mi regalo para el Baby Shower de {bebe}: {regalo}\n📅 {fecha}, {hora}\n📍 {lugar}',
   },
