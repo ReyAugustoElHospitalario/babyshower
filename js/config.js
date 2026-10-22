@@ -65,8 +65,8 @@ window.INVITACION = {
   // Si reemplazas una foto con el mismo nombre, sube el número de "?v=" para que
   // los navegadores no sigan mostrando la versión anterior guardada en caché.
   fotos: {
-    portada: 'assets/img/foto-papas-1.jpg?v=2',
-    papas: 'assets/img/foto-papas-2.jpg?v=2',
+    portada: 'assets/img/foto-papas-1.jpg?v=3',
+    papas: 'assets/img/foto-papas-2.jpg?v=3',
     ecografia: 'assets/img/ecografia.jpg?v=2',
   },
 

@@ -56,8 +56,6 @@ body::before {
   width: min(100vw, 480px);
   margin: 0 auto;
 }
-/* La portada siempre cabe completa en la pantalla */
-#portada .marco { width: min(100vw, 480px, 100svh * 375 / 812); }
 
 .escenario {
   --u: calc(100cqw / 375);
@@ -67,6 +65,10 @@ body::before {
   overflow: hidden;
   background: #fff;
 }
+
+/* La portada usa todo el ancho, igual que la invitación. Su alto se ajusta a la pantalla:
+   abajo solo se recortan los adornos, el sobre y la foto (hasta la unidad 640) siempre se ven */
+#portada .escenario { height: clamp(640 * var(--u), 100svh, var(--alto) * var(--u)); }
 
 @media (min-width: 520px) {
   .escenario { box-shadow: 0 10px 40px rgba(90, 70, 20, 0.18); }
